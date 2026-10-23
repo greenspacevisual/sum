@@ -283,7 +283,7 @@
     <div class="step-container active" id="step-1">
         <div class="step-title"><span>Шаг 1 из 3</span> Какой тип проекта необходим?</div>
         <div class="options-grid">
-            <div class="option-card" onclick="selectOption(1, 'type', 'landing', 2999, 2)">
+            <div class="option-card" onclick="selectOption(this, 1, 'type', 'landing', 2999, 2)">
                 <span class="option-icon">🤖</span>
                 <div class="option-name">Бот-визитка</div>
                 <div class="option-desc">Интерактивное меню, прайс</div>
@@ -309,7 +309,7 @@
     <div class="step-container" id="step-2">
         <div class="step-title"><span>Шаг 2 из 3</span> Стилистика и интерфейс</div>
         <div class="options-grid">
-            <div class="option-card" onclick="selectOption(2, 'style', 'minimal', 0, 0)">
+            <div class="option-card" onclick="selectOption(this, 2, 'style', 'cyber', 2500, 1)">
                 <span class="option-icon">🖤</span>
                 <div class="option-name">Строгий</div>
                 <div class="option-desc">Минимализм, стандартный UI</div>
@@ -355,27 +355,26 @@
             blocks: { count: 1, price: 0, time: 0 }
         };
 
-        function selectOption(step, category, optionId, price, time) {
-            // Находим текущий активный контейнер шага
+        function selectOption(element, step, category, optionId, price, time) {
+            // Находим текущий шаг
             const stepEl = document.getElementById(`step-${step}`);
             if (!stepEl) return;
             
             // Снимаем выделение со всех карточек на этом шаге
             stepEl.querySelectorAll('.option-card').forEach(card => card.classList.remove('selected'));
             
-            // Выделяем текущую кликнутую карточку через объект события
-            if (window.event && window.event.currentTarget) {
-                window.event.currentTarget.classList.add('selected');
-            } else if (event && event.currentTarget) {
-                event.currentTarget.classList.add('selected');
+            // Железобетонно выделяем карточку, которую передали через this
+            if (element) {
+                element.classList.add('selected');
             }
 
-            // Обновляем конфигурацию (категория состыкована)
+            // Обновляем конфигурацию
             config[category] = { id: optionId, price: price, time: time };
             
             calculateTotals();
             validateNavigation();
         }
+
 
         // Связываем твой oninput="handleSlider(this.value)" и внутренний метод
         function handleSlider(value) {
