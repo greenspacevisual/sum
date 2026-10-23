@@ -3,194 +3,472 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIBECODE // Прайс-калькулятор</title>
-    <!-- Подключаем надёжную сборку Tailwind -->
-    <script src="https://jsdelivr.net"></script>
-    <link href="https://googleapis.com" rel="stylesheet">
+    <title>Cyber Core Studio — Умный расчет стоимости</title>
+    <!-- Подключаем официальный скрипт Telegram WebApp -->
+    <script src="https://telegram.org"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #0D1117; }
-        /* Стиль для активной аккуратной полоски с мягкой неоновой подсветкой */
-        .active-row { border-color: #6366f1 !important; background-color: rgba(99, 102, 241, 0.05); }
-    </style>
-</head>
-<body class="text-gray-200 min-h-screen pb-24">
-
-    <!-- ФИКСИРОВАННАЯ ШАПКА СО СЧЕТЧИКОМ В ПРАВОМ ВЕРХНЕМ УГЛУ -->
-    <header class="sticky top-0 z-50 bg-[#161B22]/90 backdrop-blur-md border-b border-gray-800 px-6 py-4">
-        <div class="max-w-4xl mx-auto flex justify-between items-center">
-            <div>
-                <h1 class="text-lg font-bold tracking-wider text-white">VIBECODE</h1>
-                <p class="text-xs text-indigo-400">веб-разработка на максималках</p>
-            </div>
-            <!-- Счётчик в правом углу -->
-            <div class="bg-gray-900 border border-gray-800 rounded-xl px-5 py-2.5 text-right">
-                <span class="text-xs text-gray-400 block font-medium uppercase tracking-wider mb-0.5">Итог:</span>
-                <span id="top_days" class="text-sm font-semibold text-purple-400 mr-2">1 день</span>
-                <span id="top_price" class="text-2xl font-black text-indigo-400">2 000</span>
-                <span class="text-indigo-400 font-bold text-lg"> ₽</span>
-            </div>
-        </div>
-    </header>
-
-    <main class="max-w-4xl mx-auto px-4 mt-12 space-y-10">
-        
-        <!-- БЛОК 1: ТИП САЙТА -->
-        <div>
-            <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3 pl-1">01 // ТИП ПРОЕКТА</h2>
-            <div class="space-y-2">
-                <label id="label-landing" class="active-row flex justify-between items-center bg-[#161B22] border border-gray-800 p-4 rounded-xl cursor-pointer hover:border-gray-700 transition-all">
-                    <div class="flex items-center gap-3">
-                        <input type="radio" name="site_type" value="landing" checked class="w-4 h-4 accent-indigo-500" onchange="updateSelection()">
-                        <div>
-                            <span class="font-semibold text-white block">Лендинг</span>
-                            <span class="text-xs text-gray-400">Одностраничный сайт для теста ниши или товара</span>
-                        </div>
-                    </div>
-                    <span class="font-bold text-indigo-400 text-sm">2 000 ₽</span>
-                </label>
-
-                <label id="label-corporate" class="flex justify-between items-center bg-[#161B22] border border-gray-800 p-4 rounded-xl cursor-pointer hover:border-gray-700 transition-all">
-                    <div class="flex items-center gap-3">
-                        <input type="radio" name="site_type" value="corporate" class="w-4 h-4 accent-indigo-500" onchange="updateSelection()">
-                        <div>
-                            <span class="font-semibold text-white block">Бизнес-сайт</span>
-                            <span class="text-xs text-gray-400">Многостраничный сайт компании с услугами</span>
-                        </div>
-                    </div>
-                    <span class="font-bold text-indigo-400 text-sm">5 000 ₽</span>
-                </label>
-
-                <label id="label-service" class="flex justify-between items-center bg-[#161B22] border border-gray-800 p-4 rounded-xl cursor-pointer hover:border-gray-700 transition-all">
-                    <div class="flex items-center gap-3">
-                        <input type="radio" name="site_type" value="service" class="w-4 h-4 accent-indigo-500" onchange="updateSelection()">
-                        <div>
-                            <span class="font-semibold text-white block">Сложный сервис</span>
-                            <span class="text-xs text-gray-400">Личные кабинеты, каталоги или магазины</span>
-                        </div>
-                    </div>
-                    <span class="font-bold text-indigo-400 text-sm">10 000 ₽</span>
-                </label>
-            </div>
-        </div>
-
-        <!-- БЛОК 2: СТИЛЬ -->
-        <div>
-            <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3 pl-1">02 // ВИЗУАЛЬНЫЙ СТИЛЬ</h2>
-            <div class="space-y-2">
-                <label id="label-minimal" class="active-row flex justify-between items-center bg-[#161B22] border border-gray-800 p-4 rounded-xl cursor-pointer hover:border-gray-700 transition-all">
-                    <div class="flex items-center gap-3">
-                        <input type="radio" name="design_style" value="minimal" checked class="w-4 h-4 accent-indigo-500" onchange="updateSelection()">
-                        <div>
-                            <span class="font-semibold text-white block">Чистый минимализм</span>
-                            <span class="text-xs text-gray-400">Строгий, аккуратный дизайн по проверенным сеткам</span>
-                        </div>
-                    </div>
-                    <span class="font-bold text-emerald-400 text-sm">Бесплатно</span>
-                </label>
-
-                <label id="label-custom" class="flex justify-between items-center bg-[#161B22] border border-gray-800 p-4 rounded-xl cursor-pointer hover:border-gray-700 transition-all">
-                    <div class="flex items-center gap-3">
-                        <input type="radio" name="design_style" value="custom" class="w-4 h-4 accent-indigo-500" onchange="updateSelection()">
-                        <div>
-                            <span class="font-semibold text-white block">Уникальный вайб</span>
-                            <span class="text-xs text-gray-400">Индивидуальный стиль, кастомная графика и шрифты</span>
-                        </div>
-                    </div>
-                    <span class="font-bold text-indigo-400 text-sm">+1 500 ₽</span>
-                </label>
-            </div>
-        </div>
-        <!-- БЛОК 3: ФИЧИ -->
-        <div>
-            <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3 pl-1">03 // ДОПОЛНИТЕЛЬНЫЕ ОПЦИИ</h2>
-            <div class="space-y-2">
-                <label id="label-animation" class="flex justify-between items-center bg-[#161B22] border border-gray-800 p-4 rounded-xl cursor-pointer hover:border-gray-700 transition-all">
-                    <div class="flex items-center gap-3">
-                        <input type="checkbox" id="feature_animation" class="w-4 h-4 accent-indigo-500" onchange="updateSelection()">
-                        <div>
-                            <span class="font-semibold text-white block">🔥 Сложные анимации</span>
-                            <span class="text-xs text-gray-400">Плавные эффекты при скролле страниц</span>
-                        </div>
-                    </div>
-                    <span class="font-bold text-indigo-400 text-sm">+1 000 ₽</span>
-                </label>
-
-                <label id="label-tg" class="flex justify-between items-center bg-[#161B22] border border-gray-800 p-4 rounded-xl cursor-pointer hover:border-gray-700 transition-all">
-                    <div class="flex items-center gap-3">
-                        <input type="checkbox" id="feature_tg" class="w-4 h-4 accent-indigo-500" onchange="updateSelection()">
-                        <div>
-                            <span class="font-semibold text-white block">📊 Интеграция с Telegram</span>
-                            <span class="text-xs text-gray-400">Заявки моментально летят тебе в мессенджер</span>
-                        </div>
-                    </div>
-                    <span class="font-bold text-indigo-400 text-sm">+1 500 ₽</span>
-                </label>
-            </div>
-        </div>
-
-        <!-- ФОРМА ОТПРАВКИ -->
-        <div class="bg-[#161B22] border border-gray-800 rounded-2xl p-6 text-center space-y-4">
-            <p class="text-sm text-gray-400">Для заказа проекта напишите напрямую вайбкодеру в Telegram:</p>
-            <div class="max-w-sm mx-auto flex gap-2">
-                <input type="text" id="client_tg" placeholder="@твой_логин" class="w-full bg-[#0D1117] border border-gray-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 text-white">
-                <button onclick="updateSelection(); alert('Вайб пойман! Скоро спишемся!')" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold px-6 py-3 rounded-xl transition-all cursor-pointer whitespace-nowrap text-sm">
-                    НАПИСАТЬ
-                </button>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- ЛОГИКА СЧЕТЧИКА И ДИНАМИКИ -->
-    <script>
-        function updateSelection() {
-            // Базовые значения
-            const types = {
-                landing: { price: 2000, days: 1 },
-                corporate: { price: 5000, days: 3 },
-                service: { price: 10000, days: 5 }
-            };
-
-            const selectedType = document.querySelector('input[name="site_type"]:checked').value;
-            let price = types[selectedType].price;
-            let days = types[selectedType].days;
-
-            const selectedStyle = document.querySelector('input[name="design_style"]:checked').value;
-            if (selectedStyle === 'custom') {
-                price += 1500;
-                days += 1;
-            }
-
-            if (document.getElementById('feature_animation').checked) {
-                price += 1000;
-                days += 1;
-            }
-            if (document.getElementById('feature_tg').checked) {
-                price += 1500;
-                days += 1;
-            }
-
-            // Обновляем текст в шапке (правый верхний угол)
-            document.getElementById('top_price').innerText = price.toLocaleString('ru-RU');
-            let daysWord = 'дней';
-            if (days === 1) daysWord = 'день';
-            else if (days > 1 && days < 5) daysWord = 'дня';
-            document.getElementById('top_days').innerText = `${days} ${daysWord}`;
-
-            // Сброс и подсветка активных строк (как в твоем прайсе)
-            const allLabels = document.querySelectorAll('main label');
-            allLabels.forEach(label => label.classList.remove('active-row'));
-
-            // Подсвечиваем только выбранные
-            document.getElementById(`label-${selectedType}`).classList.add('active-row');
-            document.getElementById(`label-${selectedStyle}`).classList.add('active-row');
-            
-            if (document.getElementById('feature_animation').checked) document.getElementById('label-animation').classList.add('active-row');
-            if (document.getElementById('feature_tg').checked) document.getElementById('label-tg').classList.add('active-row');
+        :root {
+            --bg-color: #0d0e12;
+            --card-bg: #161822;
+            --accent-color: #00f2fe;
+            --accent-gradient: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            --text-color: #ffffff;
+            --text-muted: #8e94a6;
+            --border-color: #242838;
         }
 
-        // Запуск при старте для базового подсчета
-        updateSelection();
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Фиксированная панель со счетчиками */
+        .live-counter-panel {
+            position: sticky;
+            top: 0;
+            background: rgba(22, 24, 34, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .counter-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .counter-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .counter-value {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--accent-color);
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        /* Заголовок квиза */
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .quiz-header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .quiz-header p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* Шаги квиза */
+        .step-container {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .step-container.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step-title span {
+            background: var(--border-color);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--accent-color);
+        }
+
+        /* Сетка игровых карточек вариантов */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .option-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .option-card:active {
+            transform: scale(0.97);
+        }
+
+        .option-card.selected {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.15);
+            background: linear-gradient(180deg, #161822 0%, rgba(0, 242, 254, 0.03) 100%);
+        }
+
+        .option-icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .option-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .option-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Кастомный интерактивный слайдер */
+        .slider-wrapper {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .slider-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .range-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border-color);
+            outline: none;
+        }
+
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .range-slider::-webkit-slider-thumb:active {
+            transform: scale(1.2);
+        }
+
+        /* Кнопки навигации */
+        .navigation-panel {
+            margin-top: auto;
+            display: flex;
+            gap: 12px;
+            padding-top: 16px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn-secondary {
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            max-width: 80px;
+        }
+
+        .btn-primary {
+            background: var(--accent-gradient);
+            color: #000;
+            font-weight: 700;
+            box-shadow: 0 4px 20px rgba(0, 242, 254, 0.25);
+        }
+
+        .btn-primary:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(0, 242, 254, 0.15);
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Живой счетчик в углу (в реальном времени) -->
+    <div class="live-counter-panel">
+        <div class="counter-item">
+            <span class="counter-label">Итоговый бюджет</span>
+            <span class="counter-value" id="live-price">0 ₽</span>
+        </div>
+        <div class="counter-item" style="text-align: right;">
+            <span class="counter-label">Сроки разработки</span>
+            <span class="counter-value" id="live-time">0 дней</span>
+        </div>
+    </div>
+
+    <div class="quiz-header">
+        <h1>Конфигуратор Систем</h1>
+        <p>Собери решение для автоматизации бизнеса за 3 шага</p>
+    </div>
+
+    <!-- ШАГ 1: ТИП СИСТЕМЫ -->
+    <div class="step-container active" id="step-1">
+        <div class="step-title"><span>Шаг 1 из 3</span> Какой тип проекта необходим?</div>
+        <div class="options-grid">
+            <div class="option-card" onclick="selectOption(1, 'type', 'landing', 2999, 2)">
+                <span class="option-icon">🤖</span>
+                <div class="option-name">Бот-визитка</div>
+                <div class="option-desc">Интерактивное меню, прайс</div>
+            </div>
+            <div class="option-card" onclick="selectOption(1, 'type', 'database', 6999, 5)">
+                <span class="option-icon">📊</span>
+                <div class="option-name">Бот с БД</div>
+                <div class="option-desc">Админка, рассылки, анкеты</div>
+            </div>
+            <div class="option-card" onclick="selectOption(1, 'type', 'shop', 11999, 7)">
+                <span class="option-icon">🛍</span>
+                <div class="option-name">Магазин / WebApp</div>
+                <div class="option-desc">Корзина, онлайн-оплата</div>
+            </div>
+            <div class="option-card" onclick="selectOption(1, 'type', 'parser', 5499, 4)">
+                <span class="option-icon">⚙️</span>
+                <div class="option-name">Парсер / Скрипт</div>
+                <div class="option-desc">Автоматизация процессов</div>
+            </div>
+        </div>
+    </div>
+    <!-- ШАГ 2: СТИЛЬ / СЛОЖНОСТЬ -->
+    <div class="step-container" id="step-2">
+        <div class="step-title"><span>Шаг 2 из 3</span> Стилистика и интерфейс</div>
+        <div class="options-grid">
+            <div class="option-card" onclick="selectOption(2, 'style', 'minimal', 0, 0)">
+                <span class="option-icon">🖤</span>
+                <div class="option-name">Строгий</div>
+                <div class="option-desc">Минимализм, стандартный UI</div>
+            </div>
+            <div class="option-card" onclick="selectOption(2, 'style', 'cyber', 1500, 1)">
+                <span class="option-icon">⚡</span>
+                <div class="option-name">Cyber / Яркий</div>
+                <div class="option-desc">Кастомный дизайн, неон (+1500₽)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ШАГ 3: ОБЪЕМ СТРУКТУРЫ -->
+    <div class="step-container" id="step-3">
+        <div class="step-title"><span>Шаг 3 из 3</span> Количество экранов / блоков опроса</div>
+        <div class="slider-wrapper">
+            <div class="slider-info">
+                <span>Объем структуры:</span>
+                <span id="slider-value" style="color: var(--accent-color); font-weight: bold;">1 блок</span>
+            </div>
+            <input type="range" min="1" max="10" value="1" class="range-slider" id="blocks-range" oninput="updateSlider(this.value)">
+        </div>
+    </div>
+
+    <!-- КНОПКИ УПРАВЛЕНИЯ -->
+    <div class="navigation-panel">
+        <button class="btn btn-secondary" id="back-btn" onclick="changeStep(-1)" disabled>◀</button>
+        <button class="btn btn-primary" id="next-btn" onclick="changeStep(1)" disabled>Продолжить</button>
+    </div>
+
+    <script>
+        // Инициализируем Telegram WebApp API
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // Разворачиваем приложение на весь экран
+
+        let currentStep = 1;
+        const totalSteps = 3;
+
+        // Конфигурация выбранных данных
+        let config = {
+            type: { id: null, price: 0, time: 0 },
+            style: { id: null, price: 0, time: 0 },
+            blocks: { count: 1, price: 0, time: 0 }
+        };
+
+        function selectOption(step, category, optionId, price, time) {
+            // Снимаем выделение со всех карточек на текущем шаге
+            const stepEl = document.getElementById(`step-${step}`);
+            stepEl.querySelectorAll('.option-card').forEach(card => card.classList.remove('selected'));
+            
+            // Выделяем текущую кликнутую карточку
+            event.currentTarget.classList.add('selected');
+
+            // Обновляем конфигурацию
+            config[category] = { id: optionId, price: price, time: time };
+            
+            calculateTotals();
+            validateNavigation();
+        }
+
+        function updateSlider(value) {
+            document.getElementById('slider-value').innerText = `${value} ${getNoun(value, 'блок', 'блока', 'блоков')}`;
+            
+            // За каждый блок сверх 1 добавляем 400 руб и 0.5 дня разработки
+            const baseBlocks = value - 1;
+            config.blocks = {
+                count: parseInt(value),
+                price: baseBlocks * 400,
+                time: Math.round(baseBlocks * 0.5)
+            };
+
+            calculateTotals();
+        }
+
+        // Анимация "тикающего" счетчика для эффекта плавного изменения чисел
+        function animateCounter(elementId, start, end, suffix) {
+            const obj = document.getElementById(elementId);
+            if (start === end) return;
+            let current = start;
+            const range = end - start;
+            const increment = end > start ? Math.ceil(range / 10) : Math.floor(range / 10);
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                    clearInterval(timer);
+                    obj.innerText = end.toLocaleString('ru-RU') + suffix;
+                } else {
+                    obj.innerText = current.toLocaleString('ru-RU') + suffix;
+                }
+            }, 20);
+        }
+
+        let oldPrice = 0;
+        let oldTime = 0;
+
+        function calculateTotals() {
+            const totalPrice = config.type.price + config.style.price + config.blocks.price;
+            const totalTime = config.type.time + config.style.time + config.blocks.time;
+
+            animateCounter('live-price', oldPrice, totalPrice, ' ₽');
+            animateCounter('live-time', oldTime, totalTime, ' дней');
+
+            oldPrice = totalPrice;
+            oldTime = totalTime;
+        }
+
+        function changeStep(direction) {
+            if (currentStep === totalSteps && direction === 1) {
+                sendDataToBot();
+                return;
+            }
+
+            document.getElementById(`step-${currentStep}`).classList.remove('active');
+            currentStep += direction;
+            document.getElementById(`step-${currentStep}`).classList.add('active');
+
+            document.getElementById('back-btn').disabled = (currentStep === 1);
+            
+            if (currentStep === totalSteps) {
+                document.getElementById('next-btn').innerText = "Зафиксировать цену и заказать";
+            } else {
+                document.getElementById('next-btn').innerText = "Продолжить";
+            }
+
+            validateNavigation();
+        }
+
+        function validateNavigation() {
+            const nextBtn = document.getElementById('next-btn');
+            if (currentStep === 1 && !config.type.id) nextBtn.disabled = true;
+            else if (currentStep === 2 && !config.style.id) nextBtn.disabled = true;
+            else nextBtn.disabled = false;
+        }
+
+        // Передача результатов обратно в Telegram бота
+        function sendDataToBot() {
+            const finalData = {
+                type: config.type.id,
+                style: config.style.id,
+                blocks: config.blocks.count,
+                total_price: oldPrice,
+                total_time: oldTime
+            };
+            // Отправляем JSON-строку, бот поймает её через handler web_app_data
+            tg.sendData(JSON.stringify(finalData));
+            tg.close();
+        }
+
+        // Вспомогательная функция склонения слов (блок / блока / блоков)
+        function getNoun(number, one, two, five) {
+            let n = Math.abs(number);
+            n %= 100;
+            if (n >= 5 && n <= 20) return five;
+            n %= 10;
+            if (n === 1) return one;
+            if (n >= 2 && n <= 4) return two;
+            return five;
+        }
     </script>
 </body>
 </html>
