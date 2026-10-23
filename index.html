@@ -348,7 +348,7 @@
         let currentStep = 1;
         const totalSteps = 3;
 
-        // Конфигурация выбранных данных
+        // Конфигурация выбранных данных (теперь строго совпадает с вызовами в HTML)
         let config = {
             type: { id: null, price: 0, time: 0 },
             style: { id: null, price: 0, time: 0 },
@@ -356,29 +356,41 @@
         };
 
         function selectOption(step, category, optionId, price, time) {
-            // Снимаем выделение со всех карточек на текущем шаге
+            // Находим текущий активный контейнер шага
             const stepEl = document.getElementById(`step-${step}`);
+            if (!stepEl) return;
+            
+            // Снимаем выделение со всех карточек на этом шаге
             stepEl.querySelectorAll('.option-card').forEach(card => card.classList.remove('selected'));
             
-            // Выделяем текущую кликнутую карточку
-            event.currentTarget.classList.add('selected');
+            // Выделяем текущую кликнутую карточку через объект события
+            if (window.event && window.event.currentTarget) {
+                window.event.currentTarget.classList.add('selected');
+            } else if (event && event.currentTarget) {
+                event.currentTarget.classList.add('selected');
+            }
 
-            // Обновляем конфигурацию
+            // Обновляем конфигурацию (категория состыкована)
             config[category] = { id: optionId, price: price, time: time };
             
             calculateTotals();
             validateNavigation();
         }
 
+        // Связываем твой oninput="handleSlider(this.value)" и внутренний метод
+        function handleSlider(value) {
+            updateSlider(value);
+        }
+
         function updateSlider(value) {
-            document.getElementById('slider-value').innerText = `${value} ${getNoun(value, 'блок', 'блока', 'блоков')}`;
+            document.getElementById('slider-value').innerText = `${value} ${getNoun(value, 'модуль', 'модуля', 'модулей')}`;
             
-            // За каждый блок сверх 1 добавляем 400 руб и 0.5 дня разработки
+            // Твоя логика: за каждый дополнительный модуль сверх 1 капает цена и время
             const baseBlocks = value - 1;
             config.blocks = {
                 count: parseInt(value),
-                price: baseBlocks * 400,
-                time: Math.round(baseBlocks * 0.5)
+                price: baseBlocks * 1000, // состыковали с описанием в шаге 3 (+1000 рублей)
+                time: baseBlocks * 1
             };
 
             calculateTotals();
@@ -387,7 +399,11 @@
         // Анимация "тикающего" счетчика для эффекта плавного изменения чисел
         function animateCounter(elementId, start, end, suffix) {
             const obj = document.getElementById(elementId);
-            if (start === end) return;
+            if (!obj) return;
+            if (start === end) {
+                obj.innerText = end.toLocaleString('ru-RU') + suffix;
+                return;
+            }
             let current = start;
             const range = end - start;
             const increment = end > start ? Math.ceil(range / 10) : Math.floor(range / 10);
@@ -411,7 +427,9 @@
             const totalTime = config.type.time + config.style.time + config.blocks.time;
 
             animateCounter('live-price', oldPrice, totalPrice, ' ₽');
-            animateCounter('live-time', oldTime, totalTime, ' дней');
+            
+            let daysWord = getNoun(totalTime, 'день', 'дня', 'дней');
+            animateCounter('live-time', oldTime, totalTime, ` ${daysWord}`);
 
             oldPrice = totalPrice;
             oldTime = totalTime;
@@ -440,9 +458,16 @@
 
         function validateNavigation() {
             const nextBtn = document.getElementById('next-btn');
-            if (currentStep === 1 && !config.type.id) nextBtn.disabled = true;
-            else if (currentStep === 2 && !config.style.id) nextBtn.disabled = true;
-            else nextBtn.disabled = false;
+            if (!nextBtn) return;
+            
+            // Теперь валидация строго проверяет выбранные ID на первых двух шагах
+            if (currentStep === 1 && !config.type.id) {
+                nextBtn.disabled = true;
+            } else if (currentStep === 2 && !config.style.id) {
+                nextBtn.disabled = true;
+            } else {
+                nextBtn.disabled = false;
+            }
         }
 
         // Передача результатов обратно в Telegram бота
@@ -469,6 +494,10 @@
             if (n >= 2 && n <= 4) return two;
             return five;
         }
+
+        // Первый запуск для инициализации начального состояния кнопки и счетчиков
+        validateNavigation();
+        calculateTotals();
     </script>
 </body>
 </html>
